@@ -1,0 +1,300 @@
+import { TOKENS } from "materialwind/runtime";
+
+import { ArbitraryDemo, StatesDemo, SurfacesDemo } from "./components/Demos.tsx";
+import { Palette } from "./components/Palette.tsx";
+import { Playground } from "./components/Playground.tsx";
+import { Code, InlineCode, Note, Section } from "./components/ui.tsx";
+import { ThemeProvider, useTheme } from "./theme.tsx";
+
+const NAV = [
+  ["install", "Install"],
+  ["playground", "Playground"],
+  ["palette", "Palette"],
+  ["surfaces", "Surfaces"],
+  ["states", "Interaction states"],
+  ["dynamic", "Dynamic color"],
+  ["arbitrary", "Arbitrary values"],
+  ["options", "Options"],
+] as const;
+
+function Header() {
+  const { dark, set } = useTheme();
+  return (
+    <header className="sticky top-0 z-10 border-b border-outline-variant bg-surface/85 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-3">
+        <a href="#top" className="font-semibold tracking-tight text-on-surface">
+          materialwind
+        </a>
+        <nav className="hidden flex-1 gap-4 overflow-x-auto text-sm text-on-surface-variant lg:flex">
+          {NAV.map(([id, label]) => (
+            <a key={id} href={`#${id}`} className="whitespace-nowrap hover:text-primary">
+              {label}
+            </a>
+          ))}
+        </nav>
+        <button
+          onClick={() => set({ dark: !dark })}
+          className="interactive-surface-container-high ml-auto rounded-full px-4 py-2 text-sm font-medium lg:ml-0"
+        >
+          {dark ? "Light" : "Dark"} mode
+        </button>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <div id="top" className="py-16">
+      <p className="font-mono text-sm text-primary">Tailwind CSS 4</p>
+      <h1 className="mt-3 text-5xl font-semibold tracking-tight text-on-surface sm:text-6xl">
+        Material Design 3 color,
+        <br />
+        <span className="text-primary">the Tailwind way.</span>
+      </h1>
+      <p className="mt-5 max-w-2xl text-lg text-on-surface-variant">
+        Generate a complete, accessible Material 3 palette from a single source color. Use it
+        through ordinary Tailwind utilities, and swap the whole theme at runtime without a rebuild.
+      </p>
+      <div className="mt-8 flex flex-wrap gap-3">
+        <a
+          href="#playground"
+          className="interactive-primary rounded-full px-6 py-3 text-sm font-medium"
+        >
+          Try it live
+        </a>
+        <a
+          href="#install"
+          className="interactive-secondary-container rounded-full px-6 py-3 text-sm font-medium"
+        >
+          Get started
+        </a>
+      </div>
+      <dl className="mt-12 grid gap-4 sm:grid-cols-3">
+        {[
+          [`${TOKENS.length} tokens`, "The complete M3 dynamic color set, light and dark."],
+          ["9 schemes", "From monochrome to vibrant, with a contrast dial."],
+          ["Runtime theming", "Re-theme from a user's color without rebuilding."],
+        ].map(([title, body]) => (
+          <div key={title} className="rounded-2xl border border-outline-variant p-5">
+            <dt className="font-semibold text-on-surface">{title}</dt>
+            <dd className="mt-1 text-sm text-on-surface-variant">{body}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  );
+}
+
+const OPTIONS: [string, string, string, string][] = [
+  ["source", "hex", "—", "Required. The seed color."],
+  ["scheme", "name", "tonalSpot", "content, expressive, fidelity, fruitSalad, monochrome, neutral, rainbow, tonalSpot, vibrant."],
+  ["contrast", "-1 – 1", "0", "0 is the spec'd design. Clamped."],
+  ["specVersion", "2021 | 2025 | 2026", "2021", "Only tonalSpot, vibrant, expressive and neutral honour 2025/2026."],
+  ["darkMode", "media | class | selector", "media", "Any other string is used verbatim as a selector."],
+  ["prefix", "string", "mw", "Custom property prefix, e.g. --mw-primary."],
+  ["harmonize", "boolean", "true", "Default harmonization for custom colors."],
+  ["stateHover / stateFocus / statePress / stateDrag", "number", "8 / 12 / 12 / 16", "State-layer opacity, in percent."],
+  ["transition", "number | false", "150", "Interactive transition duration in ms."],
+];
+
+function Docs() {
+  return (
+    <>
+      <Header />
+      <main className="mx-auto max-w-6xl px-6 pb-24">
+        <Hero />
+
+        <Section
+          id="install"
+          title="Install"
+          lead="One package, one plugin block. No config file required."
+        >
+          <div className="space-y-4">
+            <Code lang="sh">npm install materialwind</Code>
+            <Code lang="app.css">{`@import "tailwindcss";
+
+@plugin "materialwind" {
+  source: #506546;
+}`}</Code>
+            <Note>
+              Requires <InlineCode>tailwindcss@^4</InlineCode>. Tokens are added through{" "}
+              <InlineCode>theme.extend</InlineCode>, so Tailwind's default palette is preserved.
+            </Note>
+          </div>
+        </Section>
+
+        <Section
+          id="playground"
+          title="Playground"
+          lead="Change the source color, scheme or contrast and watch the whole page re-theme. This is the same runtime API you would ship."
+        >
+          <Playground />
+        </Section>
+
+        <Section
+          id="palette"
+          title="Color palette"
+          lead={
+            <>
+              All {TOKENS.length} Material 3 dynamic color tokens, each usable with{" "}
+              <InlineCode>bg-</InlineCode>, <InlineCode>text-</InlineCode>,{" "}
+              <InlineCode>border-</InlineCode> and every other color utility, plus the{" "}
+              <InlineCode>/opacity</InlineCode> modifier and all variants.
+            </>
+          }
+        >
+          <Palette />
+        </Section>
+
+        <Section
+          id="surfaces"
+          title="Surfaces and on-colors"
+          lead={
+            <>
+              Material pairs every container color with an <em>on-color</em> for its content. The{" "}
+              <InlineCode>surface-*</InlineCode> utility applies both at once, so you don't have to
+              remember the pairing.
+            </>
+          }
+        >
+          <SurfacesDemo />
+        </Section>
+
+        <Section
+          id="states"
+          title="Interaction states"
+          lead={
+            <>
+              <InlineCode>interactive-*</InlineCode> adds Material's state layers using native{" "}
+              <InlineCode>color-mix()</InlineCode>. The plain background is declared first, so a
+              browser without <InlineCode>color-mix()</InlineCode> still gets the right surface.
+            </>
+          }
+        >
+          <StatesDemo />
+        </Section>
+
+        <Section
+          id="dynamic"
+          title="Dynamic color"
+          lead="The palette lives in CSS custom properties, so re-theming at runtime is just rewriting them. No rebuild, and every utility updates at once."
+        >
+          <div className="space-y-4">
+            <Code lang="js">{`import { updateTheme } from "materialwind/runtime";
+
+updateTheme({
+  source: "#ff0000",
+  scheme: "tonalSpot",
+  contrast: 0,
+  darkMode: "class",
+});`}</Code>
+            <p className="text-sm text-on-surface-variant">
+              Pass the same <InlineCode>prefix</InlineCode>, <InlineCode>darkMode</InlineCode> and
+              custom <InlineCode>colors</InlineCode> you configured at build time, otherwise the
+              variables it writes won't be the ones your utilities read. It returns the CSS string,
+              so it also works for SSR.
+            </p>
+            <Note>
+              The runtime pulls in the Material color engine. Import it lazily —{" "}
+              <InlineCode>await import("materialwind/runtime")</InlineCode> — if initial bundle size
+              matters.
+            </Note>
+          </div>
+        </Section>
+
+        <Section
+          id="arbitrary"
+          title="Arbitrary values work"
+          lead="A regression the Tailwind 3 predecessor shipped with, fixed here by construction."
+        >
+          <ArbitraryDemo />
+        </Section>
+
+        <Section id="options" title="Options" lead="Everything is configured in the @plugin block.">
+          <div className="space-y-6">
+            <div className="overflow-x-auto rounded-xl border border-outline-variant">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-surface-container-high text-on-surface">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold">Option</th>
+                    <th className="px-4 py-3 font-semibold">Type</th>
+                    <th className="px-4 py-3 font-semibold">Default</th>
+                    <th className="px-4 py-3 font-semibold">Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {OPTIONS.map(([name, type, def, note]) => (
+                    <tr key={name} className="border-t border-outline-variant align-top">
+                      <td className="px-4 py-3 font-mono text-xs text-on-surface">{name}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-on-surface-variant">{type}</td>
+                      <td className="px-4 py-3 font-mono text-xs text-on-surface-variant">{def}</td>
+                      <td className="px-4 py-3 text-on-surface-variant">{note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-on-surface">Custom colors</h3>
+              <p className="mt-1 text-sm text-on-surface-variant">
+                Any option key that isn't listed above becomes a custom color, generating a full
+                four-role group harmonized toward the source.
+              </p>
+              <div className="mt-4">
+                <Code lang="app.css">{`@plugin "materialwind" {
+  source: #506546;
+  brand: #ff0000;
+}
+
+/* gives you brand, on-brand, brand-container, on-brand-container
+   plus surface-brand / interactive-brand / dragged-brand */`}</Code>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold text-on-surface">JS config</h3>
+              <p className="mt-1 text-sm text-on-surface-variant">
+                For anything the flat CSS syntax can't express — opting a color out of
+                harmonization, or nested state opacities.
+              </p>
+              <div className="mt-4">
+                <Code lang="tailwind.config.js">{`import materialwind from "materialwind";
+
+export default {
+  plugins: [
+    materialwind({
+      source: "#506546",
+      colors: { brand: { hex: "#ff0000", harmonize: false } },
+      states: { hover: 10 },
+    }),
+  ],
+};`}</Code>
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        <footer className="border-t border-outline-variant py-10 text-sm text-on-surface-variant">
+          MIT licensed. Built on{" "}
+          <a
+            className="text-primary hover:underline"
+            href="https://github.com/material-foundation/material-color-utilities"
+          >
+            material-color-utilities
+          </a>
+          .
+        </footer>
+      </main>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <Docs />
+    </ThemeProvider>
+  );
+}

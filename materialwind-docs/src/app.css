@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+/* Class-based dark mode, matching the plugin's `darkMode: class` below. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@plugin "materialwind" {
+  source: #506546;
+  scheme: tonalSpot;
+  contrast: 0;
+  darkMode: class;
+
+  /* Any unreserved key is a custom color. */
+  brand: #ff0000;
+}
+
+/*
+ * The docs page re-themes itself at runtime via `updateTheme`, which rewrites
+ * the --mw-* custom properties. Everything below is plain Tailwind on top of
+ * the generated tokens.
+ */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-surface text-on-surface antialiased;
+}
+
+::selection {
+  @apply bg-primary-container text-on-primary-container;
+}
