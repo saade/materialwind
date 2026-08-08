@@ -31,7 +31,7 @@ function block(selector: string, vars: Record<string, string>, prefix: string) {
  * rebuild is needed and every utility updates at once.
  *
  * The palette generator pulls in the Material color engine, so import this
- * lazily (`await import("materialwind/runtime")`) if you care about the
+ * lazily (`await import("materialwind-css/runtime")`) if you care about the
  * initial bundle.
  */
 export function updateTheme(options: UpdateThemeOptions): string {

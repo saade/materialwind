@@ -61,7 +61,7 @@ function darkSelector(darkMode: string): string | null {
 }
 
 /**
- * Splits the flat option bag coming from `@plugin "materialwind" { ... }` into
+ * Splits the flat option bag coming from `@plugin "materialwind-css" { ... }` into
  * config and custom colors, so `brand: #ff0000` works as a sibling of `source`.
  */
 function splitOptions(options: MaterialwindOptions) {

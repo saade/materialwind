@@ -1,4 +1,4 @@
-import { TOKENS } from "materialwind/runtime";
+import { TOKENS } from "materialwind-css/runtime";
 
 import { ArbitraryDemo, StatesDemo, SurfacesDemo } from "./components/Demos.tsx";
 import { Palette } from "./components/Palette.tsx";
@@ -117,7 +117,7 @@ function Docs() {
             <Code lang="sh">npm install materialwind</Code>
             <Code lang="app.css">{`@import "tailwindcss";
 
-@plugin "materialwind" {
+@plugin "materialwind-css" {
   primary: #506546;
 }`}</Code>
             <Note>
@@ -184,7 +184,7 @@ function Docs() {
           lead="The palette lives in CSS custom properties, so re-theming at runtime is just rewriting them. No rebuild, and every utility updates at once."
         >
           <div className="space-y-4">
-            <Code lang="js">{`import { updateTheme } from "materialwind/runtime";
+            <Code lang="js">{`import { updateTheme } from "materialwind-css/runtime";
 
 updateTheme({
   primary: "#ff0000",
@@ -200,7 +200,7 @@ updateTheme({
             </p>
             <Note>
               The runtime pulls in the Material color engine. Import it lazily —{" "}
-              <InlineCode>await import("materialwind/runtime")</InlineCode> — if initial bundle size
+              <InlineCode>await import("materialwind-css/runtime")</InlineCode> — if initial bundle size
               matters.
             </Note>
           </div>
@@ -246,7 +246,7 @@ updateTheme({
                 four-role group harmonized toward the source.
               </p>
               <div className="mt-4">
-                <Code lang="app.css">{`@plugin "materialwind" {
+                <Code lang="app.css">{`@plugin "materialwind-css" {
   primary: #506546;
   brand: #ff0000;
 }
@@ -263,7 +263,7 @@ updateTheme({
                 harmonization, or nested state opacities.
               </p>
               <div className="mt-4">
-                <Code lang="tailwind.config.js">{`import materialwind from "materialwind";
+                <Code lang="tailwind.config.js">{`import materialwind from "materialwind-css";
 
 export default {
   plugins: [

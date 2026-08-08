@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { updateTheme, type SchemeName } from "materialwind/runtime";
+import { updateTheme, type SchemeName } from "materialwind-css/runtime";
 
 export const SCHEMES: SchemeName[] = [
   "content",

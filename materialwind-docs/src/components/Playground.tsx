@@ -73,7 +73,7 @@ export function Playground() {
   const config = [
     `@import "tailwindcss";`,
     ``,
-    `@plugin "materialwind" {`,
+    `@plugin "materialwind-css" {`,
     `  primary: ${primary};`,
     ...(secondary ? [`  secondary: ${secondary};`] : []),
     ...(tertiary ? [`  tertiary: ${tertiary};`] : []),
@@ -213,7 +213,7 @@ export function Playground() {
 
       <div className="space-y-4">
         <Code lang="app.css">{config}</Code>
-        <Code lang="runtime">{`import { updateTheme } from "materialwind/runtime";
+        <Code lang="runtime">{`import { updateTheme } from "materialwind-css/runtime";
 
 updateTheme({
   primary: "${primary}",${secondary ? `\n  secondary: "${secondary}",` : ""}${

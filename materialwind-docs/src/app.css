@@ -3,7 +3,7 @@
 /* Class-based dark mode, matching the plugin's `darkMode: class` below. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-@plugin "materialwind" {
+@plugin "materialwind-css" {
   primary: #506546;
   scheme: tonalSpot;
   contrast: 0;

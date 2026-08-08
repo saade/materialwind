@@ -9,7 +9,7 @@ a rebuild.
 ```css
 /* app.css */
 @import "tailwindcss";
-@plugin "materialwind" {
+@plugin "materialwind-css" {
   primary: #506546;
 }
 ```
@@ -22,19 +22,20 @@ a rebuild.
 ## Install
 
 ```sh
-npm install materialwind
+npm install materialwind-css
 ```
 
 Requires `tailwindcss@^4`.
 
 ## Configuration
 
-Everything is configured in the `@plugin` block. Only `source` is required.
+Everything is configured in the `@plugin` block. Only a `primary` (or `source`)
+color is required.
 
 ```css
 @import "tailwindcss";
-@plugin "materialwind" {
-  source: #506546;        /* seed color for the whole scheme */
+@plugin "materialwind-css" {
+  primary: #506546;       /* seeds the scheme; everything else derives from it */
   scheme: tonalSpot;      /* scheme variant */
   contrast: 0;            /* -1 (minimum) to 1 (maximum) */
   darkMode: class;        /* media | class | any selector */
@@ -72,7 +73,7 @@ By default every role is derived from the source color. You can pin any of them
 instead — the rest keep being derived and stay in harmony:
 
 ```css
-@plugin "materialwind" {
+@plugin "materialwind-css" {
   primary: #506546;
   secondary: #ffff00;
 }
@@ -99,7 +100,7 @@ Any option key that isn't listed above is treated as a custom color. Each one
 produces a full four-role group, harmonized toward the source color by default:
 
 ```css
-@plugin "materialwind" {
+@plugin "materialwind-css" {
   source: #506546;
   brand: #ff0000;
 }
@@ -113,7 +114,7 @@ can't express, use a JS config:
 
 ```js
 // tailwind.config.js
-import materialwind from "materialwind";
+import materialwind from "materialwind-css";
 
 export default {
   plugins: [
@@ -198,7 +199,7 @@ the Tailwind colors at them. Re-theming at runtime is therefore just rewriting
 those properties — no rebuild, and every utility updates at once.
 
 ```js
-import { updateTheme } from "materialwind/runtime";
+import { updateTheme } from "materialwind-css/runtime";
 
 updateTheme({
   source: "#ff0000",
@@ -219,7 +220,7 @@ The runtime pulls in the Material color engine, so import it lazily if initial
 bundle size matters:
 
 ```js
-const { updateTheme } = await import("materialwind/runtime");
+const { updateTheme } = await import("materialwind-css/runtime");
 ```
 
 ## Notes
@@ -239,8 +240,8 @@ materialwind bundles it so consumers never hit that.
 ## API
 
 ```ts
-import materialwind, { buildPalette, TOKENS, ON_PAIRS } from "materialwind";
-import { updateTheme } from "materialwind/runtime";
+import materialwind, { buildPalette, TOKENS, ON_PAIRS } from "materialwind-css";
+import { updateTheme } from "materialwind-css/runtime";
 ```
 
 - `buildPalette(options)` → `{ light, dark, surfaces, onPairs }` — the raw

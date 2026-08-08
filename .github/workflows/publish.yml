@@ -1,0 +1,62 @@
+name: Publish to npm
+
+on:
+  release:
+    types: [published]
+  # Lets you retry a failed publish without cutting a new release.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Required for npm trusted publishing (OIDC) and the provenance attestation
+  # npm generates from it.
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: materialwind
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Trusted publishing needs Node >= 22.14.0.
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # Node 22 bundles npm 10.x, but trusted publishing needs 11.5.1+.
+      - name: Upgrade npm
+        run: npm install -g npm@latest
+
+      # A release tagged v0.2.0 that ships package.json 0.1.0 would publish the
+      # wrong version under the right name, and npm has no undo. Fail loudly.
+      - name: Check tag matches package version
+        if: github.event_name == 'release'
+        run: |
+          PKG=$(node -p "require('./package.json').version")
+          TAG=${GITHUB_REF_NAME#v}
+          echo "package.json: $PKG"
+          echo "release tag:  $TAG"
+          if [ "$PKG" != "$TAG" ]; then
+            echo "::error::Release tag ($TAG) does not match package.json version ($PKG). Bump the version, or retag."
+            exit 1
+          fi
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+
+      # No NODE_AUTH_TOKEN: npm exchanges the workflow's OIDC identity for
+      # short-lived credentials. Provenance is generated automatically, so
+      # --provenance is not passed.
+      - name: Publish
+        run: npm publish

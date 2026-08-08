@@ -31,9 +31,15 @@ jobs:
 
       # Resolves base_path for this repo (e.g. /materialwind/), which the docs
       # build needs baked in before Vite emits asset URLs.
+      #
+      # `enablement: true` creates the Pages site if it is missing instead of
+      # failing with "Get Pages site failed", so the workflow does not depend on
+      # someone having flipped the setting by hand first.
       - name: Configure Pages
         uses: actions/configure-pages@v5
         id: pages
+        with:
+          enablement: true
 
       # The docs depend on the plugin through `file:../materialwind`, which npm
       # symlinks rather than packs -- so the plugin has to be built first or the

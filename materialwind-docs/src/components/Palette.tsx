@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ON_PAIRS, TOKENS, kebab } from "materialwind/runtime";
+import { ON_PAIRS, TOKENS, kebab } from "materialwind-css/runtime";
 
 import { useTheme } from "../theme.tsx";
 

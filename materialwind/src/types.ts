@@ -67,7 +67,7 @@ export interface MaterialwindOptions extends Partial<Record<CoreRole, string>> {
   transition?: number | false;
   /**
    * Extra named colors. Any option key that is not one of the above is also
-   * treated as a custom color, so `@plugin "materialwind" { brand: #ff0000; }`
+   * treated as a custom color, so `@plugin "materialwind-css" { brand: #ff0000; }`
    * works without nesting.
    */
   colors?: Record<string, string | CustomColor>;

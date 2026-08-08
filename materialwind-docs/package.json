@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "materialwind": "file:../materialwind",
+    "materialwind-css": "file:../materialwind",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

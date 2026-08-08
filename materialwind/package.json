@@ -1,9 +1,18 @@
 {
-  "name": "materialwind",
+  "name": "materialwind-css",
   "version": "0.1.0",
   "description": "Material Design 3 color system for Tailwind CSS 4, with dynamic color.",
   "type": "module",
   "license": "MIT",
+  "homepage": "https://saade.github.io/materialwind/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saade/materialwind.git",
+    "directory": "materialwind"
+  },
+  "bugs": {
+    "url": "https://github.com/saade/materialwind/issues"
+  },
   "keywords": [
     "tailwindcss",
     "tailwind-plugin",
