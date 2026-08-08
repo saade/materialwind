@@ -10,7 +10,7 @@ a rebuild.
 /* app.css */
 @import "tailwindcss";
 @plugin "materialwind" {
-  source: #506546;
+  primary: #506546;
 }
 ```
 
@@ -47,10 +47,12 @@ Everything is configured in the `@plugin` block. Only `source` is required.
 
 | Option | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `source` | hex | — | **Required.** The seed color. |
+| `source` | hex | — | The seed color. Optional if `primary` is given. |
+| `primary` / `secondary` / `tertiary` | hex | derived | Pin a core role instead of deriving it. See below. |
+| `neutral` / `neutralVariant` / `error` | hex | derived | Same, for the surface and error palettes. |
 | `scheme` | see below | `tonalSpot` | Scheme variant. |
 | `contrast` | `-1`–`1` | `0` | `0` is the spec'd design; clamped. |
-| `specVersion` | `2021` \| `2025` \| `2026` | `2021` | See note below. |
+| `specVersion` | `2021` \| `2025` | `2021` | See note below. |
 | `darkMode` | `media` \| `class` \| selector | `media` | Any other string is used verbatim as a selector. |
 | `prefix` | string | `mw` | Custom property prefix, e.g. `--mw-primary`. |
 | `harmonize` | boolean | `true` | Default harmonization for custom colors. |
@@ -61,8 +63,35 @@ Schemes: `content`, `expressive`, `fidelity`, `fruitSalad`, `monochrome`,
 `neutral`, `rainbow`, `tonalSpot`, `vibrant`.
 
 > **On `specVersion`:** only `tonalSpot`, `vibrant`, `expressive` and `neutral`
-> honour `2025` / `2026`. Upstream forces every other scheme back to `2021`
-> regardless of what you pass.
+> honour `2025`. Upstream forces every other scheme back to `2021` regardless of
+> what you pass.
+
+### Core colors
+
+By default every role is derived from the source color. You can pin any of them
+instead — the rest keep being derived and stay in harmony:
+
+```css
+@plugin "materialwind" {
+  primary: #506546;
+  secondary: #ffff00;
+}
+```
+
+`primary` doubles as the seed, so `source` is only needed if you want the scheme
+derived from a *different* color than your primary.
+
+Pinning takes the **hue** of the color you give and the **chroma of the scheme**
+it is joining. That is deliberate: letting an arbitrary hex bring its own chroma
+is what makes hand-assembled palettes look garish, and it would break the
+contrast guarantees the tonal system provides. So `#ffff00` gives you a yellow
+secondary that belongs to your palette, not literal yellow.
+
+Pinnable roles: `primary`, `secondary`, `tertiary`, `neutral`, `neutralVariant`,
+`error`. `neutral` and `neutralVariant` drive the surface family.
+
+Core colors are *not* harmonized — you picked the hue, so it is respected.
+Custom colors are harmonized by default, since they're extras being fitted in.
 
 ### Custom colors
 

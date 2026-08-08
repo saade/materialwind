@@ -4,7 +4,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @plugin "materialwind" {
-  source: #506546;
+  primary: #506546;
   scheme: tonalSpot;
   contrast: 0;
   darkMode: class;

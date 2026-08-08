@@ -1,8 +1,9 @@
 import { buildPalette } from "./palette.js";
-import type { CustomColor, SchemeName, SpecVersion } from "./types.js";
+import type { CoreRole, CustomColor, SchemeName, SpecVersion } from "./types.js";
 
-export interface UpdateThemeOptions {
-  source: string;
+export interface UpdateThemeOptions extends Partial<Record<CoreRole, string>> {
+  /** Seed color. Optional when `primary` is given. */
+  source?: string;
   scheme?: SchemeName;
   contrast?: number;
   specVersion?: SpecVersion;
@@ -36,6 +37,12 @@ function block(selector: string, vars: Record<string, string>, prefix: string) {
 export function updateTheme(options: UpdateThemeOptions): string {
   const prefix = options.prefix ?? "mw";
   const palette = buildPalette({
+    primary: options.primary,
+    secondary: options.secondary,
+    tertiary: options.tertiary,
+    neutral: options.neutral,
+    neutralVariant: options.neutralVariant,
+    error: options.error,
     source: options.source,
     scheme: options.scheme,
     contrast: options.contrast,

@@ -53,8 +53,9 @@ function Hero() {
         <span className="text-primary">the Tailwind way.</span>
       </h1>
       <p className="mt-5 max-w-2xl text-lg text-on-surface-variant">
-        Generate a complete, accessible Material 3 palette from a single source color. Use it
-        through ordinary Tailwind utilities, and swap the whole theme at runtime without a rebuild.
+        Generate a complete, accessible Material 3 palette from one color — or pin as many
+        roles as you like. Use it through ordinary Tailwind utilities, and swap the whole theme
+        at runtime without a rebuild.
       </p>
       <div className="mt-8 flex flex-wrap gap-3">
         <a
@@ -87,10 +88,12 @@ function Hero() {
 }
 
 const OPTIONS: [string, string, string, string][] = [
-  ["source", "hex", "—", "Required. The seed color."],
+  ["source", "hex", "—", "The seed color. Optional if primary is given."],
+  ["primary / secondary / tertiary", "hex", "derived", "Pin a core role instead of deriving it: its hue, the scheme's chroma."],
+  ["neutral / neutralVariant / error", "hex", "derived", "Same, for the surface and error palettes."],
   ["scheme", "name", "tonalSpot", "content, expressive, fidelity, fruitSalad, monochrome, neutral, rainbow, tonalSpot, vibrant."],
   ["contrast", "-1 – 1", "0", "0 is the spec'd design. Clamped."],
-  ["specVersion", "2021 | 2025 | 2026", "2021", "Only tonalSpot, vibrant, expressive and neutral honour 2025/2026."],
+  ["specVersion", "2021 | 2025", "2021", "Only tonalSpot, vibrant, expressive and neutral honour 2025."],
   ["darkMode", "media | class | selector", "media", "Any other string is used verbatim as a selector."],
   ["prefix", "string", "mw", "Custom property prefix, e.g. --mw-primary."],
   ["harmonize", "boolean", "true", "Default harmonization for custom colors."],
@@ -115,7 +118,7 @@ function Docs() {
             <Code lang="app.css">{`@import "tailwindcss";
 
 @plugin "materialwind" {
-  source: #506546;
+  primary: #506546;
 }`}</Code>
             <Note>
               Requires <InlineCode>tailwindcss@^4</InlineCode>. Tokens are added through{" "}
@@ -127,7 +130,7 @@ function Docs() {
         <Section
           id="playground"
           title="Playground"
-          lead="Change the source color, scheme or contrast and watch the whole page re-theme. This is the same runtime API you would ship."
+          lead="Pin primary, optionally pin secondary and tertiary, and watch the whole page re-theme. This is the same runtime API you would ship."
         >
           <Playground />
         </Section>
@@ -184,7 +187,7 @@ function Docs() {
             <Code lang="js">{`import { updateTheme } from "materialwind/runtime";
 
 updateTheme({
-  source: "#ff0000",
+  primary: "#ff0000",
   scheme: "tonalSpot",
   contrast: 0,
   darkMode: "class",
@@ -244,7 +247,7 @@ updateTheme({
               </p>
               <div className="mt-4">
                 <Code lang="app.css">{`@plugin "materialwind" {
-  source: #506546;
+  primary: #506546;
   brand: #ff0000;
 }
 
@@ -265,7 +268,8 @@ updateTheme({
 export default {
   plugins: [
     materialwind({
-      source: "#506546",
+      primary: "#506546",
+      secondary: "#ffd000",
       colors: { brand: { hex: "#ff0000", harmonize: false } },
       states: { hover: 10 },
     }),

@@ -11,10 +11,13 @@ export type SchemeName =
 
 /**
  * Material spec revision. Only `tonalSpot`, `vibrant`, `expressive` and
- * `neutral` honour 2025/2026; every other scheme is forced back to 2021 by the
+ * `neutral` honour 2025; every other scheme is forced back to 2021 by the
  * upstream library regardless of what is requested here.
+ *
+ * A 2026 spec exists upstream but is not in the published library, which throws
+ * `Unsupported spec version` for anything outside these two.
  */
-export type SpecVersion = "2021" | "2025" | "2026";
+export type SpecVersion = "2021" | "2025";
 
 /** A user-supplied brand color layered on top of the generated scheme. */
 export interface CustomColor {
@@ -23,8 +26,20 @@ export interface CustomColor {
   harmonize?: boolean;
 }
 
-export interface MaterialwindOptions {
-  /** Seed color the whole scheme is derived from. Required. */
+/** Tonal palettes that can be pinned directly instead of being derived. */
+export type CoreRole =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "neutral"
+  | "neutralVariant"
+  | "error";
+
+export interface MaterialwindOptions extends Partial<Record<CoreRole, string>> {
+  /**
+   * Seed color the whole scheme is derived from. Optional when `primary` is
+   * given — `primary` then seeds the scheme.
+   */
   source?: string;
   scheme?: SchemeName;
   /** -1 (minimum) to 1 (maximum). 0 is the spec'd design. Clamped. */

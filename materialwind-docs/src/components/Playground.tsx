@@ -13,14 +13,70 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
+/**
+ * A core role is either derived from primary or pinned to a hue. An empty
+ * string means derived — the option is then omitted from the config entirely.
+ */
+function CoreRole({
+  label,
+  value,
+  fallback,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  fallback: string;
+  onChange: (value: string) => void;
+}) {
+  const pinned = value !== "";
+  return (
+    <Field
+      label={label}
+      hint={pinned ? "Pinned — its hue, your palette's chroma." : "Derived from primary."}
+    >
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => onChange(pinned ? "" : fallback)}
+          className={`rounded-full px-3 py-1.5 text-xs font-medium ${
+            pinned ? "interactive-primary" : "interactive-surface-container-high"
+          }`}
+        >
+          {pinned ? "Pinned" : "Derived"}
+        </button>
+        {pinned ? (
+          <>
+            <input
+              type="color"
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              aria-label={`${label} color`}
+              className="h-9 w-12 cursor-pointer rounded-lg border border-outline-variant bg-transparent"
+            />
+            <span className="font-mono text-sm text-on-surface-variant">{value}</span>
+          </>
+        ) : null}
+        <span
+          className={`ml-auto rounded-full px-3 py-1 text-xs font-medium ${
+            label === "Secondary" ? "surface-secondary-container" : "surface-tertiary-container"
+          }`}
+        >
+          {label.toLowerCase()}
+        </span>
+      </div>
+    </Field>
+  );
+}
+
 export function Playground() {
-  const { source, scheme, contrast, brand, dark, set, reset } = useTheme();
+  const { primary, secondary, tertiary, scheme, contrast, brand, dark, set, reset } = useTheme();
 
   const config = [
     `@import "tailwindcss";`,
     ``,
     `@plugin "materialwind" {`,
-    `  source: ${source};`,
+    `  primary: ${primary};`,
+    ...(secondary ? [`  secondary: ${secondary};`] : []),
+    ...(tertiary ? [`  tertiary: ${tertiary};`] : []),
     `  scheme: ${scheme};`,
     `  contrast: ${contrast};`,
     `  darkMode: class;`,
@@ -47,19 +103,19 @@ export function Playground() {
         </div>
 
         <div className="mt-6 space-y-6">
-          <Field label="Source color" hint="The seed the whole scheme derives from.">
+          <Field label="Primary" hint="Seeds the scheme, and every other role derives from it.">
             <div className="flex flex-wrap items-center gap-3">
               <input
                 type="color"
-                value={source}
-                onChange={(e) => set({ source: e.target.value })}
-                aria-label="Source color"
+                value={primary}
+                onChange={(e) => set({ primary: e.target.value })}
+                aria-label="Primary color"
                 className="h-10 w-14 cursor-pointer rounded-lg border border-outline-variant bg-transparent"
               />
               <input
                 type="text"
-                value={source}
-                onChange={(e) => set({ source: e.target.value })}
+                value={primary}
+                onChange={(e) => set({ primary: e.target.value })}
                 spellCheck={false}
                 className="w-28 rounded-lg border border-outline bg-surface px-3 py-2 font-mono text-sm text-on-surface focus:border-primary focus:outline-none"
               />
@@ -67,11 +123,11 @@ export function Playground() {
                 {SWATCHES.map((hex) => (
                   <button
                     key={hex}
-                    onClick={() => set({ source: hex })}
+                    onClick={() => set({ primary: hex })}
                     aria-label={`Use ${hex}`}
                     style={{ backgroundColor: hex }}
                     className={`h-8 w-8 rounded-full border-2 transition ${
-                      source.toLowerCase() === hex ? "border-on-surface" : "border-outline-variant"
+                      primary.toLowerCase() === hex ? "border-on-surface" : "border-outline-variant"
                     }`}
                   />
                 ))}
@@ -79,7 +135,20 @@ export function Playground() {
             </div>
           </Field>
 
-          <Field label="Scheme" hint="How the palette is derived from the source.">
+          <CoreRole
+            label="Secondary"
+            value={secondary}
+            fallback="#ffd000"
+            onChange={(v) => set({ secondary: v })}
+          />
+          <CoreRole
+            label="Tertiary"
+            value={tertiary}
+            fallback="#0061a4"
+            onChange={(v) => set({ tertiary: v })}
+          />
+
+          <Field label="Scheme" hint="How the palette is derived from primary.">
             <select
               value={scheme}
               onChange={(e) => set({ scheme: e.target.value as typeof scheme })}
@@ -147,7 +216,9 @@ export function Playground() {
         <Code lang="runtime">{`import { updateTheme } from "materialwind/runtime";
 
 updateTheme({
-  source: "${source}",
+  primary: "${primary}",${secondary ? `\n  secondary: "${secondary}",` : ""}${
+          tertiary ? `\n  tertiary: "${tertiary}",` : ""
+        }
   scheme: "${scheme}",
   contrast: ${contrast},
   colors: { brand: "${brand}" },

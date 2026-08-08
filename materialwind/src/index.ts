@@ -1,7 +1,8 @@
 import plugin from "tailwindcss/plugin";
 import type { Config, PluginCreator } from "tailwindcss/plugin";
 
-import { buildPalette } from "./palette.js";
+import { CORE_ROLES, buildPalette } from "./palette.js";
+import type { BuildPaletteOptions } from "./palette.js";
 import type { CustomColor, MaterialwindOptions } from "./types.js";
 
 /**
@@ -14,13 +15,15 @@ export interface MaterialwindPlugin {
   __isOptionsFunction: true;
 }
 
-export { buildPalette, SCHEME_NAMES } from "./palette.js";
+export { CORE_ROLES, buildPalette, SCHEME_NAMES } from "./palette.js";
 export { ON_PAIRS, TOKENS, kebab } from "./tokens.js";
 export type * from "./types.js";
 
 /** Option keys that are configuration rather than custom color names. */
 const RESERVED = new Set([
   "source",
+  // Core roles pin a tonal palette instead of adding a new color.
+  ...CORE_ROLES,
   "scheme",
   "contrast",
   "specVersion",
@@ -71,6 +74,28 @@ function splitOptions(options: MaterialwindOptions) {
   return colors;
 }
 
+/**
+ * Maps the plugin's option bag onto the palette generator's. Shared by the
+ * handler and the config half so the two can never disagree about the palette.
+ */
+function paletteOptions(options: MaterialwindOptions): BuildPaletteOptions {
+  const core: Partial<Record<string, string>> = {};
+  for (const role of CORE_ROLES) {
+    const value = options[role];
+    if (typeof value === "string") core[role] = value;
+  }
+
+  return {
+    ...core,
+    source: options.source,
+    scheme: options.scheme,
+    contrast: options.contrast,
+    specVersion: options.specVersion,
+    harmonize: options.harmonize,
+    colors: splitOptions(options),
+  };
+}
+
 export const materialwind: MaterialwindPlugin = plugin.withOptions<MaterialwindOptions>(
   (options = {}) =>
     ({ addBase, matchUtilities }) => {
@@ -89,14 +114,7 @@ export const materialwind: MaterialwindPlugin = plugin.withOptions<MaterialwindO
       };
       const transition = options.transition === undefined ? 150 : options.transition;
 
-      const palette = buildPalette({
-        source: options.source!,
-        scheme: options.scheme,
-        contrast: options.contrast,
-        specVersion: options.specVersion,
-        harmonize: options.harmonize,
-        colors: splitOptions(options),
-      });
+      const palette = buildPalette(paletteOptions(options));
 
       const v = (name: string) => `--${prefix}-${name}`;
 
@@ -183,14 +201,7 @@ export const materialwind: MaterialwindPlugin = plugin.withOptions<MaterialwindO
 
   (options = {}) => {
     const prefix = options.prefix ?? "mw";
-    const palette = buildPalette({
-      source: options.source!,
-      scheme: options.scheme,
-      contrast: options.contrast,
-      specVersion: options.specVersion,
-      harmonize: options.harmonize,
-      colors: splitOptions(options),
-    });
+    const palette = buildPalette(paletteOptions(options));
 
     // Every token becomes a real Tailwind color pointing at its custom property,
     // so `bg-primary`, `text-on-primary`, `border-outline`, `bg-primary/50` and

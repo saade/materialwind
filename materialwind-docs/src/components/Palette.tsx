@@ -107,7 +107,7 @@ function Swatch({ token }: { token: string }) {
   const name = kebab(token);
   const on = ON_PAIRS[token];
   const [hex, setHex] = useState("");
-  const { source, scheme, contrast, dark } = useTheme();
+  const { primary, secondary, tertiary, scheme, contrast, dark } = useTheme();
 
   // Read the resolved value straight off the document so the label always shows
   // what is actually painted, including after a runtime theme swap.
@@ -118,7 +118,7 @@ function Swatch({ token }: { token: string }) {
       );
     const id = requestAnimationFrame(read);
     return () => cancelAnimationFrame(id);
-  }, [name, source, scheme, contrast, dark]);
+  }, [name, primary, secondary, tertiary, scheme, contrast, dark]);
 
   return (
     <div className="overflow-hidden rounded-xl border border-outline-variant">

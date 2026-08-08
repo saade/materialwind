@@ -3,43 +3,46 @@ import {
   DynamicScheme,
   Hct,
   MaterialDynamicColors,
-  SchemeContent,
-  SchemeExpressive,
-  SchemeFidelity,
-  SchemeFruitSalad,
-  SchemeMonochrome,
-  SchemeNeutral,
-  SchemeRainbow,
-  SchemeTonalSpot,
-  SchemeVibrant,
   TonalPalette,
+  Variant,
   argbFromHex,
   hexFromArgb,
 } from "@material/material-color-utilities";
 
 import { ON_PAIRS, TOKENS, kebab } from "./tokens.js";
-import type { CustomColor, Palette, SchemeName, SpecVersion } from "./types.js";
+import type { CoreRole, CustomColor, Palette, SchemeName, SpecVersion } from "./types.js";
 
-type SchemeCtor = new (
-  source: Hct,
-  isDark: boolean,
-  contrastLevel: number,
-  specVersion?: SpecVersion,
-) => DynamicScheme;
-
-const SCHEMES: Record<SchemeName, SchemeCtor> = {
-  content: SchemeContent as SchemeCtor,
-  expressive: SchemeExpressive as SchemeCtor,
-  fidelity: SchemeFidelity as SchemeCtor,
-  fruitSalad: SchemeFruitSalad as SchemeCtor,
-  monochrome: SchemeMonochrome as SchemeCtor,
-  neutral: SchemeNeutral as SchemeCtor,
-  rainbow: SchemeRainbow as SchemeCtor,
-  tonalSpot: SchemeTonalSpot as SchemeCtor,
-  vibrant: SchemeVibrant as SchemeCtor,
+/**
+ * Schemes are built by constructing `DynamicScheme` with a variant rather than
+ * using the `Scheme*` subclasses, because only the former accepts tonal palette
+ * overrides -- which is what lets a caller pin `primary`, `secondary` etc.
+ *
+ * `tests/palette.test.ts` asserts this produces byte-identical output to the
+ * subclasses across every scheme, mode and contrast level.
+ */
+const SCHEMES: Record<SchemeName, Variant> = {
+  content: Variant.CONTENT,
+  expressive: Variant.EXPRESSIVE,
+  fidelity: Variant.FIDELITY,
+  fruitSalad: Variant.FRUIT_SALAD,
+  monochrome: Variant.MONOCHROME,
+  neutral: Variant.NEUTRAL,
+  rainbow: Variant.RAINBOW,
+  tonalSpot: Variant.TONAL_SPOT,
+  vibrant: Variant.VIBRANT,
 };
 
 export const SCHEME_NAMES = Object.keys(SCHEMES) as SchemeName[];
+
+/** The tonal palettes a caller may pin directly. */
+export const CORE_ROLES: CoreRole[] = [
+  "primary",
+  "secondary",
+  "tertiary",
+  "neutral",
+  "neutralVariant",
+  "error",
+];
 
 /**
  * Tones for a custom color group, per the M3 custom-color recipe.
@@ -51,8 +54,9 @@ const CUSTOM_TONES = {
   dark: { color: 80, onColor: 20, container: 30, onContainer: 90 },
 } as const;
 
-export interface BuildPaletteOptions {
-  source: string;
+export interface BuildPaletteOptions extends Partial<Record<CoreRole, string>> {
+  /** Seed color. Optional when `primary` is given, which then seeds the scheme. */
+  source?: string;
   scheme?: SchemeName;
   contrast?: number;
   specVersion?: SpecVersion;
@@ -60,26 +64,53 @@ export interface BuildPaletteOptions {
   harmonize?: boolean;
 }
 
-export function buildPalette({
-  source,
-  scheme = "tonalSpot",
-  contrast = 0,
-  specVersion = "2021",
-  colors = {},
-  harmonize = true,
-}: BuildPaletteOptions): Palette {
-  if (!source) throw new Error("materialwind: a `source` color is required.");
+export function buildPalette(options: BuildPaletteOptions): Palette {
+  const {
+    source,
+    scheme = "tonalSpot",
+    contrast = 0,
+    specVersion = "2021",
+    colors = {},
+    harmonize = true,
+  } = options;
 
-  const Scheme = SCHEMES[scheme];
-  if (!Scheme) {
+  // `primary` doubles as the seed when no explicit source is given, so the
+  // common case is just `{ primary: "#506546" }`.
+  const seed = source || options.primary;
+  if (!seed) {
+    throw new Error("materialwind: a `source` or `primary` color is required.");
+  }
+
+  const variant = SCHEMES[scheme];
+  if (variant === undefined) {
     throw new Error(
       `materialwind: unknown scheme "${scheme}". Expected one of: ${SCHEME_NAMES.join(", ")}.`,
     );
   }
 
-  const sourceArgb = argbFromHex(source);
+  const sourceArgb = argbFromHex(seed);
   const sourceHct = Hct.fromInt(sourceArgb);
   const level = Math.max(-1, Math.min(1, contrast));
+  const common = { sourceColorHct: sourceHct, variant, contrastLevel: level, specVersion };
+
+  // A pinned core color contributes its hue, but takes chroma from the scheme
+  // it is joining. Letting an arbitrary hex bring its own chroma is what makes
+  // hand-picked palettes look garish and blows the contrast guarantees.
+  const base = new DynamicScheme({ ...common, isDark: false });
+  const chromaFor = (role: CoreRole) =>
+    role === "neutral"
+      ? base.neutralPalette.chroma
+      : role === "neutralVariant"
+        ? base.neutralVariantPalette.chroma
+        : base.primaryPalette.chroma;
+
+  const overrides: Record<string, TonalPalette> = {};
+  for (const role of CORE_ROLES) {
+    const hex = options[role];
+    if (!hex) continue;
+    const hct = Hct.fromInt(argbFromHex(hex));
+    overrides[`${role}Palette`] = TonalPalette.fromHueAndChroma(hct.hue, chromaFor(role));
+  }
 
   const light: Record<string, string> = {};
   const dark: Record<string, string> = {};
@@ -88,7 +119,7 @@ export function buildPalette({
     [false, light],
     [true, dark],
   ] as const) {
-    const s = new Scheme(sourceHct, isDark, level, specVersion);
+    const s = new DynamicScheme({ ...common, isDark, ...overrides });
     const mdc = new MaterialDynamicColors();
     for (const token of TOKENS) {
       const dynamicColor = mdc[token]();
