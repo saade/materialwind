@@ -249,6 +249,35 @@ import { updateTheme } from "materialwind-css/runtime";
 - `TOKENS` — the complete token list.
 - `ON_PAIRS` — container token → on-color token.
 
+## Credits
+
+materialwind stands on work by others, and would not exist without it.
+
+**[tailwind-material-colors][tmc]**, **[tailwind-material-surfaces][tms]** and
+**[tailwind-mode-aware-colors][tmac]** by [Javier Morales][javier] (MIT) — the
+Tailwind 3 originals this is a rewrite of. The shape of this plugin comes from
+there: generating a Material palette from one source color and exposing it as
+ordinary Tailwind colors, harmonized custom colors, the `interactive-*` state
+layers at Material's 8/12/12/16 opacities, and re-theming at runtime by
+rewriting CSS custom properties. If you are on Tailwind 3, use those.
+
+**[material-theme-builder][mtb]** by [abernier][abernier] (MIT) — the rule that
+a pinned core color contributes its *hue* while taking the *chroma* of the
+scheme it joins, which is what keeps hand-picked palettes from going garish.
+
+**[material-color-utilities][mcu]** by Google (Apache-2.0) — the color engine.
+Every tone, scheme and contrast level is its work; materialwind only translates
+it into Tailwind. It is bundled into `dist/`; see `THIRD-PARTY-NOTICES.md`.
+
+[tmc]: https://github.com/JavierM42/tailwind-material-colors
+[tms]: https://github.com/JavierM42/tailwind-material-surfaces
+[tmac]: https://github.com/JavierM42/tailwind-mode-aware-colors
+[javier]: https://github.com/JavierM42
+[mtb]: https://github.com/abernier/material-theme-builder
+[abernier]: https://github.com/abernier
+[mcu]: https://github.com/material-foundation/material-color-utilities
+
 ## License
 
-MIT
+MIT for materialwind itself. Bundled third-party code keeps its own license —
+see `THIRD-PARTY-NOTICES.md`.

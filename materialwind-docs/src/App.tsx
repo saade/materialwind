@@ -15,6 +15,7 @@ const NAV = [
   ["dynamic", "Dynamic color"],
   ["arbitrary", "Arbitrary values"],
   ["options", "Options"],
+  ["credits", "Credits"],
 ] as const;
 
 function Header() {
@@ -101,6 +102,53 @@ const OPTIONS: [string, string, string, string][] = [
   ["transition", "number | false", "150", "Interactive transition duration in ms."],
 ];
 
+const CREDITS = [
+  {
+    links: [
+      {
+        label: "tailwind-material-colors",
+        href: "https://github.com/JavierM42/tailwind-material-colors",
+      },
+      {
+        label: "tailwind-material-surfaces",
+        href: "https://github.com/JavierM42/tailwind-material-surfaces",
+      },
+      {
+        label: "tailwind-mode-aware-colors",
+        href: "https://github.com/JavierM42/tailwind-mode-aware-colors",
+      },
+    ],
+    author: "Javier Morales",
+    authorHref: "https://github.com/JavierM42",
+    license: "MIT",
+    body: "The Tailwind 3 originals this project is a rewrite of. The shape of this plugin comes from there: generating a Material palette from one source color and exposing it as ordinary Tailwind colors, harmonized custom colors, the interactive state layers at Material's 8/12/12/16 opacities, and re-theming at runtime by rewriting CSS custom properties. If you are on Tailwind 3, use those.",
+  },
+  {
+    links: [
+      {
+        label: "material-theme-builder",
+        href: "https://github.com/abernier/material-theme-builder",
+      },
+    ],
+    author: "abernier",
+    authorHref: "https://github.com/abernier",
+    license: "MIT",
+    body: "The rule that a pinned core color contributes its hue while taking the chroma of the scheme it joins — what keeps hand-picked palettes from going garish.",
+  },
+  {
+    links: [
+      {
+        label: "material-color-utilities",
+        href: "https://github.com/material-foundation/material-color-utilities",
+      },
+    ],
+    author: "Google",
+    authorHref: "https://github.com/material-foundation",
+    license: "Apache-2.0",
+    body: "The color engine. Every tone, scheme and contrast level is its work; materialwind only translates it into Tailwind.",
+  },
+];
+
 function Docs() {
   return (
     <>
@@ -114,7 +162,7 @@ function Docs() {
           lead="One package, one plugin block. No config file required."
         >
           <div className="space-y-4">
-            <Code lang="sh">npm install materialwind</Code>
+            <Code lang="sh">npm install materialwind-css</Code>
             <Code lang="app.css">{`@import "tailwindcss";
 
 @plugin "materialwind-css" {
@@ -280,13 +328,47 @@ export default {
           </div>
         </Section>
 
+        <Section
+          id="credits"
+          title="Credits"
+          lead="materialwind stands on work by others, and would not exist without it."
+        >
+          <div className="space-y-4">
+            {CREDITS.map((credit) => (
+              <div
+                key={credit.author}
+                className="rounded-2xl border border-outline-variant bg-surface-container-low p-5"
+              >
+                <h3 className="font-semibold text-on-surface">
+                  {credit.links.map((link, i) => (
+                    <span key={link.href}>
+                      {i > 0 ? ", " : ""}
+                      <a className="text-primary hover:underline" href={link.href}>
+                        {link.label}
+                      </a>
+                    </span>
+                  ))}
+                </h3>
+                <p className="mt-0.5 text-sm text-on-surface-variant">
+                  by{" "}
+                  <a className="hover:underline" href={credit.authorHref}>
+                    {credit.author}
+                  </a>{" "}
+                  · {credit.license}
+                </p>
+                <p className="mt-2 text-sm text-on-surface-variant">{credit.body}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+
         <footer className="border-t border-outline-variant py-10 text-sm text-on-surface-variant">
-          MIT licensed. Built on{" "}
+          materialwind is MIT licensed. Bundled third-party code keeps its own license — see{" "}
           <a
             className="text-primary hover:underline"
-            href="https://github.com/material-foundation/material-color-utilities"
+            href="https://github.com/saade/materialwind/blob/main/materialwind/THIRD-PARTY-NOTICES.md"
           >
-            material-color-utilities
+            THIRD-PARTY-NOTICES
           </a>
           .
         </footer>

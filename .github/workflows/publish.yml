@@ -46,6 +46,27 @@ jobs:
             exit 1
           fi
 
+      # The very first release is published by hand, because npm needs the
+      # package to exist before a trusted publisher can be configured. Without
+      # this check, cutting a release for that same version fails on "cannot
+      # publish over previously published version". Also makes retries safe.
+      - name: Check whether this version is already on npm
+        id: published
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          # A transient failure yields 000, which falls through to publishing --
+          # the safe direction, since npm rejects a duplicate version anyway.
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 --retry 3 \
+            "https://registry.npmjs.org/$NAME/$VERSION")
+          if [ "$CODE" = "200" ]; then
+            echo "already=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::$NAME@$VERSION is already on npm. Skipping publish."
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+            echo "$NAME@$VERSION is not published yet."
+          fi
+
       - name: Install
         run: npm ci
 
@@ -59,4 +80,5 @@ jobs:
       # short-lived credentials. Provenance is generated automatically, so
       # --provenance is not passed.
       - name: Publish
+        if: steps.published.outputs.already == 'false'
         run: npm publish

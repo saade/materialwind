@@ -69,6 +69,27 @@ npm generally requires the package to exist before a trusted publisher can be
 configured, so the **first** release may need a manual `npm publish` from
 `materialwind/` while logged in locally. Every release after that runs from CI.
 
+## Credits
+
+- **[tailwind-material-colors][tmc]**, **[tailwind-material-surfaces][tms]**,
+  **[tailwind-mode-aware-colors][tmac]** — [Javier Morales][javier] (MIT). The
+  Tailwind 3 originals this project is a rewrite of; the plugin's whole shape,
+  its state-layer opacities and its runtime re-theming approach come from them.
+- **[material-theme-builder][mtb]** — [abernier][abernier] (MIT). The
+  hue-from-your-color, chroma-from-the-scheme rule used when pinning core colors.
+- **[material-color-utilities][mcu]** — Google (Apache-2.0). The color engine,
+  bundled into the published package. See
+  [`materialwind/THIRD-PARTY-NOTICES.md`](materialwind/THIRD-PARTY-NOTICES.md).
+
+[tmc]: https://github.com/JavierM42/tailwind-material-colors
+[tms]: https://github.com/JavierM42/tailwind-material-surfaces
+[tmac]: https://github.com/JavierM42/tailwind-mode-aware-colors
+[javier]: https://github.com/JavierM42
+[mtb]: https://github.com/abernier/material-theme-builder
+[abernier]: https://github.com/abernier
+[mcu]: https://github.com/material-foundation/material-color-utilities
+
 ## License
 
-MIT
+MIT for materialwind itself. Bundled third-party code keeps its own license —
+see [`materialwind/THIRD-PARTY-NOTICES.md`](materialwind/THIRD-PARTY-NOTICES.md).
