@@ -7,8 +7,7 @@
   "homepage": "https://saade.github.io/materialwind/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/saade/materialwind.git",
-    "directory": "materialwind"
+    "url": "git+https://github.com/saade/materialwind.git"
   },
   "bugs": {
     "url": "https://github.com/saade/materialwind/issues"

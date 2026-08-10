@@ -1,6 +1,0 @@
-node_modules
-dist
-.materialwind-test-*.css
-
-# npm pack output
-*.tgz
