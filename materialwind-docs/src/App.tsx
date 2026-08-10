@@ -1,44 +1,59 @@
+import { useCallback, useState } from "react";
 import { TOKENS } from "materialwind-css/runtime";
 
 import { ArbitraryDemo, StatesDemo, SurfacesDemo } from "./components/Demos.tsx";
+import { Gallery } from "./components/Gallery.tsx";
 import { Palette } from "./components/Palette.tsx";
 import { Playground } from "./components/Playground.tsx";
+import { Rail } from "./components/Rail.tsx";
 import { Code, InlineCode, Note, Section } from "./components/ui.tsx";
 import { ThemeProvider, useTheme } from "./theme.tsx";
 
-const NAV = [
-  ["install", "Install"],
-  ["playground", "Playground"],
-  ["palette", "Palette"],
-  ["surfaces", "Surfaces"],
-  ["states", "Interaction states"],
-  ["dynamic", "Dynamic color"],
-  ["arbitrary", "Arbitrary values"],
-  ["options", "Options"],
-  ["credits", "Credits"],
-] as const;
-
-function Header() {
+function Header({ onOpenNav }: { onOpenNav: () => void }) {
   const { dark, set } = useTheme();
   return (
-    <header className="sticky top-0 z-10 border-b border-outline-variant bg-surface/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-3">
+    <header className="sticky top-0 z-20 border-b border-outline-variant bg-surface/85 backdrop-blur">
+      <div className="mx-auto flex max-w-[88rem] items-center gap-3 px-6 py-3">
+        <button
+          onClick={onOpenNav}
+          aria-label="Open navigation"
+          className="interactive-surface-container-high -ml-1 rounded-full p-2.5 lg:hidden"
+        >
+          {/* Three bars, drawn rather than pulled from an icon font. */}
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden fill="none">
+            {[4, 9, 14].map((y) => (
+              <line
+                key={y}
+                x1="2"
+                y1={y}
+                x2="16"
+                y2={y}
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+              />
+            ))}
+          </svg>
+        </button>
+
         <a href="#top" className="font-semibold tracking-tight text-on-surface">
           materialwind
         </a>
-        <nav className="hidden flex-1 gap-4 overflow-x-auto text-sm text-on-surface-variant lg:flex">
-          {NAV.map(([id, label]) => (
-            <a key={id} href={`#${id}`} className="whitespace-nowrap hover:text-primary">
-              {label}
-            </a>
-          ))}
-        </nav>
-        <button
-          onClick={() => set({ dark: !dark })}
-          className="interactive-surface-container-high ml-auto rounded-full px-4 py-2 text-sm font-medium lg:ml-0"
-        >
-          {dark ? "Light" : "Dark"} mode
-        </button>
+
+        <div className="ml-auto flex items-center gap-2">
+          <a
+            href="https://github.com/saade/materialwind"
+            className="interactive-surface-container-high hidden rounded-full px-4 py-2 text-sm font-medium sm:block"
+          >
+            GitHub
+          </a>
+          <button
+            onClick={() => set({ dark: !dark })}
+            className="interactive-surface-container-high rounded-full px-4 py-2 text-sm font-medium"
+          >
+            {dark ? "Light" : "Dark"} mode
+          </button>
+        </div>
       </div>
     </header>
   );
@@ -150,11 +165,21 @@ const CREDITS = [
 ];
 
 function Docs() {
+  const [navOpen, setNavOpen] = useState(false);
+  const closeNav = useCallback(() => setNavOpen(false), []);
+
   return (
     <>
-      <Header />
-      <main className="mx-auto max-w-6xl px-6 pb-24">
-        <Hero />
+      <Header onOpenNav={() => setNavOpen(true)} />
+      {/*
+        The rail is a sibling of the content, not a child, so it can stay
+        sticky while the article scrolls. `minmax(0,1fr)` keeps wide children
+        (the token grid, code blocks) from forcing the column open.
+      */}
+      <div className="mx-auto grid max-w-[88rem] gap-x-10 px-6 lg:grid-cols-[13rem_minmax(0,1fr)]">
+        <Rail open={navOpen} onClose={closeNav} />
+        <main className="min-w-0 pb-24">
+          <Hero />
 
         <Section
           id="install"
@@ -196,6 +221,14 @@ function Docs() {
           }
         >
           <Palette />
+        </Section>
+
+        <Section
+          id="components"
+          title="Components"
+          lead="Material 3 components built only from these tokens. Change the source color in the playground and every one of them follows."
+        >
+          <Gallery />
         </Section>
 
         <Section
@@ -372,7 +405,8 @@ export default {
           </a>
           .
         </footer>
-      </main>
+        </main>
+      </div>
     </>
   );
 }
