@@ -13,12 +13,11 @@ import { ON_PAIRS, TOKENS, kebab } from "./tokens.js";
 import type { CoreRole, CustomColor, Palette, SchemeName, SpecVersion } from "./types.js";
 
 /**
- * Schemes are built by constructing `DynamicScheme` with a variant rather than
- * using the `Scheme*` subclasses, because only the former accepts tonal palette
- * overrides -- which is what lets a caller pin `primary`, `secondary` etc.
+ * Built from `DynamicScheme` + a variant rather than the `Scheme*` subclasses,
+ * because only this form accepts tonal palette overrides -- which is what lets
+ * a caller pin `primary`, `secondary` etc.
  *
- * `tests/palette.test.ts` asserts this produces byte-identical output to the
- * subclasses across every scheme, mode and contrast level.
+ * `tests/core-colors.test.ts` asserts the two produce identical output.
  */
 const SCHEMES: Record<SchemeName, Variant> = {
   content: Variant.CONTENT,
@@ -44,11 +43,8 @@ export const CORE_ROLES: CoreRole[] = [
   "error",
 ];
 
-/**
- * Tones for a custom color group, per the M3 custom-color recipe.
- * We build these directly instead of using the library's `customColor()` helper,
- * which lives in `theme_utils` and transitively pulls in DOM/canvas image code.
- */
+/** Built directly rather than via the library's `customColor()`, which lives in
+ *  `theme_utils` and transitively pulls in DOM/canvas image code. */
 const CUSTOM_TONES = {
   light: { color: 40, onColor: 100, container: 90, onContainer: 10 },
   dark: { color: 80, onColor: 20, container: 30, onContainer: 90 },
@@ -74,8 +70,7 @@ export function buildPalette(options: BuildPaletteOptions): Palette {
     harmonize = true,
   } = options;
 
-  // `primary` doubles as the seed when no explicit source is given, so the
-  // common case is just `{ primary: "#506546" }`.
+  // `primary` doubles as the seed, so `{ primary: "#506546" }` is enough.
   const seed = source || options.primary;
   if (!seed) {
     throw new Error("materialwind: a `source` or `primary` color is required.");

@@ -13,10 +13,7 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
   );
 }
 
-/**
- * A core role is either derived from primary or pinned to a hue. An empty
- * string means derived — the option is then omitted from the config entirely.
- */
+/** Empty value means derived, and the option is omitted from the config. */
 function CoreRole({
   label,
   value,
@@ -32,7 +29,7 @@ function CoreRole({
   return (
     <Field
       label={label}
-      hint={pinned ? "Pinned — its hue, your palette's chroma." : "Derived from primary."}
+      hint={pinned ? "Pinned to its hue, with your palette's chroma." : "Derived from primary."}
     >
       <div className="flex items-center gap-3">
         <button
@@ -162,7 +159,7 @@ export function Playground() {
             </select>
           </Field>
 
-          <Field label={`Contrast — ${contrast.toFixed(2)}`} hint="-1 minimum, 0 spec'd, 1 maximum.">
+          <Field label={`Contrast: ${contrast.toFixed(2)}`} hint="-1 minimum, 0 spec'd, 1 maximum.">
             <input
               type="range"
               min={-1}

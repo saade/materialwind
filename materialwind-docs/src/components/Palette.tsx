@@ -3,11 +3,8 @@ import { ON_PAIRS, TOKENS, kebab } from "materialwind-css/runtime";
 
 import { useTheme } from "../theme.tsx";
 
-/**
- * Token groups, in the order the Material spec presents them. Every one of the
- * 59 tokens appears in exactly one group -- `leftover` below asserts that at
- * build time so a new token can't silently vanish from the docs.
- */
+/** Grouped in spec order. `leftover` below catches any token missing from a
+ *  group, so a new one can't silently vanish from the docs. */
 const GROUPS: { title: string; note: string; tokens: string[] }[] = [
   {
     title: "Surfaces",
@@ -109,8 +106,7 @@ function Swatch({ token }: { token: string }) {
   const [hex, setHex] = useState("");
   const { primary, secondary, tertiary, scheme, contrast, dark } = useTheme();
 
-  // Read the resolved value straight off the document so the label always shows
-  // what is actually painted, including after a runtime theme swap.
+  // Read off the document so the label survives a runtime theme swap.
   useEffect(() => {
     const read = () =>
       setHex(
@@ -136,7 +132,7 @@ function Swatch({ token }: { token: string }) {
           {name}
         </div>
         <div className="mt-0.5 font-mono text-[11px] uppercase text-on-surface-variant">
-          {hex || "—"}
+          {hex || "\u00a0"}
         </div>
       </div>
     </div>

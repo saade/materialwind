@@ -33,7 +33,7 @@ export function StatesDemo() {
       <div className="rounded-2xl border border-outline-variant bg-surface-container-low p-6">
         <h4 className="font-medium text-on-surface">Drag state</h4>
         <p className="mt-1 text-sm text-on-surface-variant">
-          Swap in <InlineCode>dragged-*</InlineCode> while an element is being dragged — it pins
+          Swap in <InlineCode>dragged-*</InlineCode> while an element is being dragged. It pins
           the state layer at 16%.
         </p>
         <div className="mt-5">
@@ -100,11 +100,10 @@ export function ArbitraryDemo() {
   return (
     <div className="space-y-6">
       <Note tone="good">
-        The Tailwind 3 predecessor documented this as a known issue: “Arbitrary background colors
-        such as <InlineCode>bg-[#000000]</InlineCode> don’t work when you use this plugin.” The
-        cause was a second generator registered under the core <InlineCode>bg</InlineCode>
-        namespace, which made every arbitrary <InlineCode>bg-[…]</InlineCode> ambiguous, so
-        Tailwind emitted nothing at all. materialwind never touches a core utility namespace.
+        A plugin that registers a second generator under a core namespace like{" "}
+        <InlineCode>bg</InlineCode> makes every arbitrary <InlineCode>bg-[…]</InlineCode> value
+        ambiguous, and Tailwind emits nothing at all. materialwind never touches a core utility
+        namespace, so arbitrary values keep working.
       </Note>
 
       <div className="flex flex-wrap gap-3">
@@ -127,7 +126,7 @@ export function ArbitraryDemo() {
       </div>
 
       <p className="text-sm text-on-surface-variant">
-        Tailwind’s own palette survives too — tokens are added through{" "}
+        Tailwind’s own palette survives too. Tokens are added through{" "}
         <InlineCode>theme.extend</InlineCode>, so <InlineCode>bg-blue-500</InlineCode> still works
         alongside <InlineCode>bg-primary</InlineCode>.
       </p>

@@ -6,11 +6,9 @@ export default defineConfig({
   dts: true,
   clean: true,
   target: "node18",
-  // @material/material-color-utilities@0.4.0 ships extensionless relative
-  // imports (e.g. `from '../dynamiccolor/dynamic_scheme'`), which Node's ESM
-  // resolver rejects outright. Bundling it rewrites those specifiers, so
-  // consumers never hit the broken resolution. It is a devDependency for
-  // exactly this reason -- it must not be resolved at consumer runtime.
+  // @material/material-color-utilities@0.4.0 ships extensionless relative imports
+  // that Node's ESM resolver rejects. Bundling rewrites them, so consumers never
+  // hit it -- which is also why it is a devDependency, not a dependency.
   noExternal: ["@material/material-color-utilities"],
   external: ["tailwindcss", "tailwindcss/plugin"],
 });

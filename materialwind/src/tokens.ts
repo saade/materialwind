@@ -1,15 +1,10 @@
 /**
- * The complete Material Design 3 dynamic-color token set.
+ * Every zero-argument accessor on `MaterialDynamicColors`. Listed explicitly so
+ * the token set is deterministic and typed; `tests/tokens.test.ts` reflects over
+ * the library and fails if this drifts.
  *
- * Each entry is the name of a zero-argument accessor on a `MaterialDynamicColors`
- * instance. The list is explicit rather than reflected so that the emitted token
- * set is deterministic and typed -- `tests/tokens.test.ts` asserts it stays in
- * sync with the library, so a token added upstream fails the build instead of
- * silently going missing.
- *
- * Note this is deliberately NOT driven off `MaterialDynamicColors#allColors`,
- * which omits `surfaceVariant`, `shadow`, `scrim`, `surfaceTint` and every
- * palette key color.
+ * Deliberately not driven off `MaterialDynamicColors#allColors`, which omits
+ * `surfaceVariant`, `shadow`, `scrim`, `surfaceTint` and the palette key colors.
  */
 export const TOKENS = [
   // Palette key colors
@@ -86,11 +81,8 @@ export const TOKENS = [
 
 export type Token = (typeof TOKENS)[number];
 
-/**
- * Maps a container token to the token that should be used for content placed on
- * top of it. Drives `surface-*` / `interactive-*` and the state-layer overlay
- * color -- only tokens listed here get those utilities.
- */
+/** Container token -> its content color. Only tokens listed here get
+ *  `surface-*` / `interactive-*` / `dragged-*`. */
 export const ON_PAIRS: Record<string, string> = {
   background: "onBackground",
 

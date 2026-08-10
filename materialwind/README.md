@@ -48,11 +48,11 @@ color is required.
 
 | Option | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `source` | hex | — | The seed color. Optional if `primary` is given. |
+| `source` | hex | none | The seed color. Optional if `primary` is given. |
 | `primary` / `secondary` / `tertiary` | hex | derived | Pin a core role instead of deriving it. See below. |
 | `neutral` / `neutralVariant` / `error` | hex | derived | Same, for the surface and error palettes. |
 | `scheme` | see below | `tonalSpot` | Scheme variant. |
-| `contrast` | `-1`–`1` | `0` | `0` is the spec'd design; clamped. |
+| `contrast` | `-1` to `1` | `0` | `0` is the spec'd design; clamped. |
 | `specVersion` | `2021` \| `2025` | `2021` | See note below. |
 | `darkMode` | `media` \| `class` \| selector | `media` | Any other string is used verbatim as a selector. |
 | `prefix` | string | `mw` | Custom property prefix, e.g. `--mw-primary`. |
@@ -70,7 +70,7 @@ Schemes: `content`, `expressive`, `fidelity`, `fruitSalad`, `monochrome`,
 ### Core colors
 
 By default every role is derived from the source color. You can pin any of them
-instead — the rest keep being derived and stay in harmony:
+instead. The rest keep being derived and stay in harmony:
 
 ```css
 @plugin "materialwind-css" {
@@ -91,7 +91,7 @@ secondary that belongs to your palette, not literal yellow.
 Pinnable roles: `primary`, `secondary`, `tertiary`, `neutral`, `neutralVariant`,
 `error`. `neutral` and `neutralVariant` drive the surface family.
 
-Core colors are *not* harmonized — you picked the hue, so it is respected.
+Core colors are *not* harmonized. You picked the hue, so it is respected.
 Custom colors are harmonized by default, since they're extras being fitted in.
 
 ### Custom colors
@@ -137,29 +137,29 @@ Every token becomes an ordinary Tailwind color, so it works with `bg-`, `text-`,
 
 All **59** M3 dynamic color tokens are generated:
 
-**Surfaces** — `background`, `on-background`, `surface`, `surface-dim`,
+**Surfaces.** `background`, `on-background`, `surface`, `surface-dim`,
 `surface-bright`, `surface-container-lowest`, `surface-container-low`,
 `surface-container`, `surface-container-high`, `surface-container-highest`,
 `on-surface`, `surface-variant`, `on-surface-variant`, `outline`,
 `outline-variant`, `inverse-surface`, `inverse-on-surface`, `shadow`, `scrim`,
 `surface-tint`
 
-**Primary** — `primary`, `primary-dim`, `on-primary`, `primary-container`,
+**Primary.** `primary`, `primary-dim`, `on-primary`, `primary-container`,
 `on-primary-container`, `inverse-primary`, `primary-fixed`, `primary-fixed-dim`,
 `on-primary-fixed`, `on-primary-fixed-variant`
 
-**Secondary** — `secondary`, `secondary-dim`, `on-secondary`,
+**Secondary.** `secondary`, `secondary-dim`, `on-secondary`,
 `secondary-container`, `on-secondary-container`, `secondary-fixed`,
 `secondary-fixed-dim`, `on-secondary-fixed`, `on-secondary-fixed-variant`
 
-**Tertiary** — `tertiary`, `tertiary-dim`, `on-tertiary`, `tertiary-container`,
+**Tertiary.** `tertiary`, `tertiary-dim`, `on-tertiary`, `tertiary-container`,
 `on-tertiary-container`, `tertiary-fixed`, `tertiary-fixed-dim`,
 `on-tertiary-fixed`, `on-tertiary-fixed-variant`
 
-**Error** — `error`, `error-dim`, `on-error`, `error-container`,
+**Error.** `error`, `error-dim`, `on-error`, `error-container`,
 `on-error-container`
 
-**Palette key colors** — `primary-palette-key-color`,
+**Palette key colors.** `primary-palette-key-color`,
 `secondary-palette-key-color`, `tertiary-palette-key-color`,
 `neutral-palette-key-color`, `neutral-variant-palette-key-color`,
 `error-palette-key-color`
@@ -181,7 +181,7 @@ utilities apply that pairing for you.
 ```
 
 The redundant `surface` segment is dropped from the class name, so surface
-tokens read naturally — `surface`, `surface-container-high`, `surface-variant`,
+tokens read naturally: `surface`, `surface-container-high`, `surface-variant`,
 `surface-inverse`. The literal token name (`surface-surface-container-high`)
 also works if you prefer it.
 
@@ -196,7 +196,7 @@ These exist for every token that has an on-color, and for every custom color.
 
 The plugin emits the palette as custom properties (`--mw-primary`, …) and points
 the Tailwind colors at them. Re-theming at runtime is therefore just rewriting
-those properties — no rebuild, and every utility updates at once.
+those properties. No rebuild, and every utility updates at once.
 
 ```js
 import { updateTheme } from "materialwind-css/runtime";
@@ -225,10 +225,10 @@ const { updateTheme } = await import("materialwind-css/runtime");
 
 ## Notes
 
-**Arbitrary color values work.** `bg-[#000000]` compiles correctly.
-materialwind never registers a generator under a core utility namespace, which
-is what broke arbitrary background colors in the Tailwind 3 predecessor. There
-are regression tests for this.
+**Arbitrary color values work.** `bg-[#000000]` compiles correctly. materialwind
+never registers a generator under a core utility namespace. Doing so makes
+every arbitrary `bg-[…]` ambiguous and Tailwind emits nothing. There are
+regression tests for this.
 
 **Tailwind's default palette is preserved.** Tokens are added via
 `theme.extend`, so `bg-blue-500` and friends still work.
@@ -244,30 +244,24 @@ import materialwind, { buildPalette, TOKENS, ON_PAIRS } from "materialwind-css";
 import { updateTheme } from "materialwind-css/runtime";
 ```
 
-- `buildPalette(options)` → `{ light, dark, surfaces, onPairs }` — the raw
+- `buildPalette(options)` → `{ light, dark, surfaces, onPairs }`: the raw
   generator, if you want the palette without Tailwind.
-- `TOKENS` — the complete token list.
-- `ON_PAIRS` — container token → on-color token.
+- `TOKENS`: the complete token list.
+- `ON_PAIRS`: container token to on-color token.
 
 ## Credits
 
-materialwind stands on work by others, and would not exist without it.
+**[material-color-utilities][mcu]** by Google (Apache-2.0) is bundled into
+`dist/` and does the color math: tonal palettes, scheme variants, contrast
+levels. See `THIRD-PARTY-NOTICES.md`.
 
-**[tailwind-material-colors][tmc]**, **[tailwind-material-surfaces][tms]** and
-**[tailwind-mode-aware-colors][tmac]** by [Javier Morales][javier] (MIT) — the
-Tailwind 3 originals this is a rewrite of. The shape of this plugin comes from
-there: generating a Material palette from one source color and exposing it as
-ordinary Tailwind colors, harmonized custom colors, the `interactive-*` state
-layers at Material's 8/12/12/16 opacities, and re-theming at runtime by
-rewriting CSS custom properties. If you are on Tailwind 3, use those.
+### Inspiration
 
-**[material-theme-builder][mtb]** by [abernier][abernier] (MIT) — the rule that
-a pinned core color contributes its *hue* while taking the *chroma* of the
-scheme it joins, which is what keeps hand-picked palettes from going garish.
+Other work in the Material and Tailwind space:
 
-**[material-color-utilities][mcu]** by Google (Apache-2.0) — the color engine.
-Every tone, scheme and contrast level is its work; materialwind only translates
-it into Tailwind. It is bundled into `dist/`; see `THIRD-PARTY-NOTICES.md`.
+- [tailwind-material-colors][tmc], [tailwind-material-surfaces][tms] and
+  [tailwind-mode-aware-colors][tmac] by [Javier Morales][javier]
+- [material-theme-builder][mtb] by [abernier][abernier]
 
 [tmc]: https://github.com/JavierM42/tailwind-material-colors
 [tms]: https://github.com/JavierM42/tailwind-material-surfaces
@@ -279,5 +273,5 @@ it into Tailwind. It is bundled into `dist/`; see `THIRD-PARTY-NOTICES.md`.
 
 ## License
 
-MIT for materialwind itself. Bundled third-party code keeps its own license —
-see `THIRD-PARTY-NOTICES.md`.
+MIT. Bundled third-party code keeps its own license; see
+`THIRD-PARTY-NOTICES.md`.

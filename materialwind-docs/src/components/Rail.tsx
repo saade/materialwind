@@ -17,13 +17,10 @@ export const NAV = [
 const ACTIVE_LINE = 120;
 
 /**
- * Tracks the section currently under the reading line.
- *
- * A scroll handler rather than IntersectionObserver: "the last section whose
- * top has passed the line" is a total order over the sections, so it can never
- * land on two at once or, more importantly, on none — which is what happens
- * with observer rootMargin tricks when a section is shorter than the viewport.
- * The final section would otherwise never activate.
+ * A scroll handler rather than IntersectionObserver: "the last section whose top
+ * has passed the line" is a total order, so it can never land on two sections or
+ * on none, which observer rootMargin tricks do when a section is shorter than
+ * the viewport, leaving the final section unreachable.
  */
 function useActiveSection(ids: readonly string[]): string | null {
   const [active, setActive] = useState<string | null>(null);
@@ -70,10 +67,8 @@ function useActiveSection(ids: readonly string[]): string | null {
   return active;
 }
 
-/**
- * The Material active indicator: one pill that slides between items rather than
- * a background per item, so movement reads as a single object.
- */
+/** One pill that slides, rather than a background per item, so the movement
+ *  reads as a single object. */
 function useIndicator(active: string | null) {
   const listRef = useRef<HTMLUListElement>(null);
   const [rect, setRect] = useState<{ top: number; height: number } | null>(null);
@@ -147,7 +142,6 @@ function Items({
 export function Rail({ open, onClose }: { open: boolean; onClose: () => void }) {
   const active = useActiveSection(NAV.map(([id]) => id));
 
-  // Escape closes the mobile drawer, and body scroll is locked while it is up.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -164,7 +158,6 @@ export function Rail({ open, onClose }: { open: boolean; onClose: () => void }) 
 
   return (
     <>
-      {/* Persistent rail. Sticky under the header on wide viewports. */}
       <nav
         aria-label="Sections"
         className="sticky top-20 hidden h-fit py-2 lg:block"
@@ -172,7 +165,7 @@ export function Rail({ open, onClose }: { open: boolean; onClose: () => void }) 
         <Items active={active} />
       </nav>
 
-      {/* Modal drawer below lg, where a persistent rail would eat the page. */}
+      {/* Below lg a persistent rail would eat the page, so it becomes a drawer. */}
       <div
         className={`fixed inset-0 z-30 lg:hidden ${open ? "" : "pointer-events-none"}`}
         aria-hidden={!open}

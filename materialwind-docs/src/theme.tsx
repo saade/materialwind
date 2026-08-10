@@ -61,8 +61,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     () => window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? false,
   );
 
-  // Re-theme the page. This rewrites the same --mw-* custom properties the
-  // plugin emitted at build time, so every utility on the page updates at once.
   // Omitted core roles are left out entirely so they stay derived from primary.
   useEffect(() => {
     updateTheme({

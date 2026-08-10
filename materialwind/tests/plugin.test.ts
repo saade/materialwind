@@ -13,14 +13,9 @@ const PKG = fileURLToPath(new URL("..", import.meta.url));
 const DIST = join(PKG, "dist", "index.js");
 
 /**
- * Compiles a stylesheet that loads the plugin through a real `@plugin` rule, so
- * the test exercises the same path a consumer does.
- *
- * This deliberately runs against `dist/` rather than `src/`: Tailwind resolves
- * `@plugin` with Node's ESM resolver, which cannot load the raw TypeScript and
- * -- more importantly -- cannot resolve the Material library's extensionless
- * imports. Both are only fixed by the bundle, so the bundle is what we test.
- * Run `npm run build` first.
+ * Runs against `dist/`, not `src/`: Tailwind resolves `@plugin` with Node's ESM
+ * resolver, which can load neither raw TypeScript nor the Material library's
+ * extensionless imports. Only the bundle fixes both. Run `npm run build` first.
  */
 async function compile(
   classes: string[],
@@ -240,11 +235,9 @@ describe("surface utilities", () => {
 });
 
 /**
- * The Tailwind 3 predecessor documented "arbitrary background colors such as
- * bg-[#000000] don't work when you use this plugin". The cause was a second
- * generator registered under the core `bg` namespace, which made every
- * arbitrary `bg-[...]` candidate ambiguous so Tailwind emitted nothing.
- * materialwind never touches a core utility namespace; these lock that in.
+ * A second generator under the core `bg` namespace would make every arbitrary
+ * `bg-[...]` candidate ambiguous, and Tailwind would emit nothing. These lock in
+ * that no core utility namespace is ever touched.
  */
 describe("arbitrary color values (regression)", () => {
   it("compiles bg-[#000000] to real CSS", async () => {

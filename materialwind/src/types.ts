@@ -38,7 +38,7 @@ export type CoreRole =
 export interface MaterialwindOptions extends Partial<Record<CoreRole, string>> {
   /**
    * Seed color the whole scheme is derived from. Optional when `primary` is
-   * given — `primary` then seeds the scheme.
+   * given, in which case `primary` seeds the scheme.
    */
   source?: string;
   scheme?: SchemeName;

@@ -1,13 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
-/**
- * A Material 3 component gallery. These are real, interactive components built
- * only from materialwind's tokens and utilities — so they re-theme live with
- * the playground, which is the whole point of showing them.
- *
- * Each group names the color roles it leans on, so the mapping from token to
- * pixel is legible rather than implied.
- */
 function Group({
   title,
   tokens,
@@ -18,12 +10,8 @@ function Group({
   children: ReactNode;
 }) {
   return (
-    /*
-     * The panel sits on the *lowest* surface deliberately. Components demo
-     * their own container tones on top of it, and an elevated button
-     * (surface-container-low) or an outlined card (surface) would be invisible
-     * against a panel painted the same tone.
-     */
+    /* Lowest surface, so components demoing their own container tones stay
+       visible against it. */
     <div className="rounded-2xl border border-outline-variant bg-surface-container-lowest p-6">
       <div className="mb-5">
         <h3 className="font-semibold text-on-surface">{title}</h3>
@@ -33,8 +21,6 @@ function Group({
     </div>
   );
 }
-
-/* -------------------------------------------------------------- buttons -- */
 
 function Buttons() {
   return (
@@ -108,8 +94,6 @@ function Buttons() {
   );
 }
 
-/* ---------------------------------------------------------------- cards -- */
-
 function Cards() {
   const variants = [
     {
@@ -151,8 +135,6 @@ function Cards() {
     </Group>
   );
 }
-
-/* ---------------------------------------------------------------- chips -- */
 
 function Chips() {
   const [selected, setSelected] = useState<string[]>(["Tonal spot"]);
@@ -198,8 +180,6 @@ function Chips() {
   );
 }
 
-/* ----------------------------------------------------------- text fields -- */
-
 function TextFields() {
   return (
     <Group
@@ -207,7 +187,6 @@ function TextFields() {
       tokens="surface-container-highest · primary · on-surface-variant · error"
     >
       <div className="grid gap-5 sm:grid-cols-3">
-        {/* Filled: tonal container with a thickening underline on focus. */}
         <label className="block">
           <span className="mb-1 block text-xs text-on-surface-variant">Filled</span>
           <input
@@ -217,7 +196,6 @@ function TextFields() {
           />
         </label>
 
-        {/* Outlined. */}
         <label className="block">
           <span className="mb-1 block text-xs text-on-surface-variant">Outlined</span>
           <input
@@ -226,7 +204,6 @@ function TextFields() {
           />
         </label>
 
-        {/* Error state — the one place the error family shows up in real UI. */}
         <label className="block">
           <span className="mb-1 block text-xs text-error">Error</span>
           <input
@@ -240,8 +217,6 @@ function TextFields() {
     </Group>
   );
 }
-
-/* ---------------------------------------------------- selection controls -- */
 
 function Switch({ label }: { label: string }) {
   const [on, setOn] = useState(true);
@@ -340,8 +315,6 @@ function Selection() {
   );
 }
 
-/* ----------------------------------------------------------------- tabs -- */
-
 function Tabs() {
   const tabs = ["Light", "Dark", "Contrast"];
   const [active, setActive] = useState(0);
@@ -377,8 +350,6 @@ function Tabs() {
   );
 }
 
-/* ------------------------------------------------ dialog + snackbar (inverse) -- */
-
 function Overlays() {
   const [dialog, setDialog] = useState(false);
   const [snack, setSnack] = useState(false);
@@ -403,7 +374,7 @@ function Overlays() {
       tokens="surface-container-high · inverse-surface · inverse-on-surface · inverse-primary"
     >
       <p className="mb-4 text-sm text-on-surface-variant">
-        The snackbar is where the inverse roles earn their place — it deliberately contrasts
+        The snackbar is where the inverse roles earn their place. It deliberately contrasts
         against the page so it reads as temporary.
       </p>
       <div className="flex flex-wrap gap-3">
@@ -469,8 +440,6 @@ function Overlays() {
   );
 }
 
-/* ------------------------------------------------------- list + progress -- */
-
 function ListAndProgress() {
   return (
     <Group
@@ -527,22 +496,14 @@ function ListAndProgress() {
   );
 }
 
-/* ------------------------------------------------------------ tertiary -- */
-
-/**
- * Tertiary is the one accent Material leaves unassigned — no baseline component
- * defaults to it, and the spec calls it "contrasting accents that balance
- * primary and secondary". The engine builds it to contrast on purpose: in the
- * default scheme the tertiary palette is the source hue rotated +60°.
- *
- * So it gets its own group, showing the uses the spec actually names.
- */
+/** Tertiary has no baseline component of its own, so it gets a group showing
+ *  the uses the spec names. */
 function Tertiary() {
   const people = [
-    { initials: "JM", name: "Javier", tone: "primary" },
-    { initials: "AB", name: "abernier", tone: "tertiary" },
-    { initials: "SA", name: "Saade", tone: "secondary" },
-    { initials: "GO", name: "Google", tone: "tertiary" },
+    { initials: "AL", name: "Alex", tone: "primary" },
+    { initials: "BR", name: "Brooke", tone: "tertiary" },
+    { initials: "CA", name: "Casey", tone: "secondary" },
+    { initials: "DR", name: "Drew", tone: "tertiary" },
   ];
 
   const tone = (t: string) =>
@@ -558,14 +519,12 @@ function Tertiary() {
       tokens="tertiary · on-tertiary · tertiary-container · on-tertiary-container"
     >
       <p className="mb-5 text-sm text-on-surface-variant">
-        No baseline component uses tertiary by default — it is the slot Material leaves for your
+        No baseline component uses tertiary by default. It is the slot Material leaves for your
         product. Its palette is the source hue rotated 60°, so it contrasts with primary while
         staying in the same theme.
       </p>
 
       <div className="space-y-6">
-        {/* Avatars — the classic place a third accent stops everything looking
-            like one colour. */}
         <div>
           <h4 className="mb-3 text-xs font-medium uppercase tracking-wide text-on-surface-variant">
             Avatars
@@ -584,8 +543,6 @@ function Tertiary() {
           </div>
         </div>
 
-        {/* A complementary card next to a primary one, so the balance the spec
-            talks about is actually visible rather than asserted. */}
         <div>
           <h4 className="mb-3 text-xs font-medium uppercase tracking-wide text-on-surface-variant">
             Complementary card
@@ -604,7 +561,6 @@ function Tertiary() {
           </div>
         </div>
 
-        {/* Attention without error's alarm. */}
         <div>
           <h4 className="mb-3 text-xs font-medium uppercase tracking-wide text-on-surface-variant">
             Status and highlights
@@ -620,12 +576,11 @@ function Tertiary() {
               Deprecated
             </span>
             <span className="text-xs text-on-surface-variant">
-              — tertiary draws attention; error means something is wrong.
+              Tertiary draws attention; error means something is wrong.
             </span>
           </div>
         </div>
 
-        {/* Three harmonized accents shown together. */}
         <div>
           <h4 className="mb-3 text-xs font-medium uppercase tracking-wide text-on-surface-variant">
             The three accents together

@@ -25,14 +25,11 @@ function block(selector: string, vars: Record<string, string>, prefix: string) {
 }
 
 /**
- * Regenerates the palette from a new source color and swaps it in at runtime.
+ * Regenerates the palette and swaps it in by rewriting the custom properties the
+ * plugin already emitted -- no rebuild, every utility updates at once.
  *
- * This only rewrites the custom properties the plugin already emitted, so no
- * rebuild is needed and every utility updates at once.
- *
- * The palette generator pulls in the Material color engine, so import this
- * lazily (`await import("materialwind-css/runtime")`) if you care about the
- * initial bundle.
+ * Pulls in the Material color engine, so import it lazily if initial bundle size
+ * matters.
  */
 export function updateTheme(options: UpdateThemeOptions): string {
   const prefix = options.prefix ?? "mw";

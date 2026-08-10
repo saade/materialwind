@@ -31,7 +31,7 @@ cd ../materialwind-docs && npm install && npm run dev
 ```
 
 The docs depend on the plugin through `file:../materialwind`, which npm
-symlinks rather than packs — so build the plugin (`npm run build`) before
+symlinks rather than packs, so build the plugin (`npm run build`) before
 building the docs, or the docs resolve an empty `dist/`.
 
 ## Releasing
@@ -71,15 +71,14 @@ configured, so the **first** release may need a manual `npm publish` from
 
 ## Credits
 
-- **[tailwind-material-colors][tmc]**, **[tailwind-material-surfaces][tms]**,
-  **[tailwind-mode-aware-colors][tmac]** — [Javier Morales][javier] (MIT). The
-  Tailwind 3 originals this project is a rewrite of; the plugin's whole shape,
-  its state-layer opacities and its runtime re-theming approach come from them.
-- **[material-theme-builder][mtb]** — [abernier][abernier] (MIT). The
-  hue-from-your-color, chroma-from-the-scheme rule used when pinning core colors.
-- **[material-color-utilities][mcu]** — Google (Apache-2.0). The color engine,
-  bundled into the published package. See
-  [`materialwind/THIRD-PARTY-NOTICES.md`](materialwind/THIRD-PARTY-NOTICES.md).
+**[material-color-utilities][mcu]** by Google (Apache-2.0). The color engine,
+bundled into the published package. See
+[`materialwind/THIRD-PARTY-NOTICES.md`](materialwind/THIRD-PARTY-NOTICES.md).
+
+**Inspiration.** [tailwind-material-colors][tmc],
+[tailwind-material-surfaces][tms] and [tailwind-mode-aware-colors][tmac] by
+[Javier Morales][javier], and [material-theme-builder][mtb] by
+[abernier][abernier].
 
 [tmc]: https://github.com/JavierM42/tailwind-material-colors
 [tms]: https://github.com/JavierM42/tailwind-material-surfaces
@@ -91,5 +90,4 @@ configured, so the **first** release may need a manual `npm publish` from
 
 ## License
 
-MIT for materialwind itself. Bundled third-party code keeps its own license —
-see [`materialwind/THIRD-PARTY-NOTICES.md`](materialwind/THIRD-PARTY-NOTICES.md).
+MIT for materialwind itself. Bundled third-party code keeps its own license; see [`materialwind/THIRD-PARTY-NOTICES.md`](materialwind/THIRD-PARTY-NOTICES.md).
